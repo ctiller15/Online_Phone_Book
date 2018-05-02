@@ -3,6 +3,11 @@ const app = angular.module("main", [])
 app.controller("mainController", ["$scope", "$http", ($scope, $http) => {
   // login
 
+  let currToken = localStorage.token;
+  $scope.hasToken = Boolean(currToken);
+  console.log($scope.hasToken);
+
+
   // creates a user token.
   const postToken = () => {
     // Take user and pass
@@ -34,9 +39,12 @@ app.controller("mainController", ["$scope", "$http", ($scope, $http) => {
       if(res.status == 200) {
         localStorage.setItem("token", res.data.access_token);
         logIn();
-      } else if(res.status == 400){
-        localStorage.setItem("token", "");
       }
+    }, (err) => {
+      console.log("Not logged in!!!");
+      localStorage.setItem("token", "");
+      currToken = localStorage.token;
+      $scope.hasToken = Boolean(currToken);
     })
   }
 
@@ -74,7 +82,12 @@ app.controller("mainController", ["$scope", "$http", ($scope, $http) => {
 
   $scope.login = () => {
 
-    postToken();
+    if($scope.hasToken){
+      postToken();
+    } else {
+      createAcc();
+    }
+
 
   }
 }]);
