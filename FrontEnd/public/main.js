@@ -7,6 +7,18 @@ app.controller("mainController", ["$scope", "$http", ($scope, $http) => {
   $scope.hasToken = Boolean(currToken);
   console.log($scope.hasToken);
 
+  $scope.contacts = [];
+  $scope.username = "";
+  $scope.password = "";
+
+  $scope.isLoggedIn = false;
+
+  const checkLoggedIn = () => {
+    if($scope.hasToken){
+      $scope.isLoggedIn = true;
+      logIn();
+    }
+  }
 
   // creates a user token.
   const postToken = () => {
@@ -16,6 +28,7 @@ app.controller("mainController", ["$scope", "$http", ($scope, $http) => {
       password: $scope.password,
       grant_type: "password"
     }
+    console.log(data);
 
     // post
     $http({
@@ -40,12 +53,14 @@ app.controller("mainController", ["$scope", "$http", ($scope, $http) => {
         localStorage.setItem("token", res.data.access_token);
         logIn();
       }
-    }, (err) => {
+    }
+    , (err) => {
       console.log("Not logged in!!!");
       localStorage.setItem("token", "");
       currToken = localStorage.token;
       $scope.hasToken = Boolean(currToken);
-    })
+    }
+  )
   }
 
   const logIn = () => {
@@ -59,7 +74,19 @@ app.controller("mainController", ["$scope", "$http", ($scope, $http) => {
       }
     }).then(res => {
       console.log(res);
+      $scope.contacts = res.data;
+      console.log($scope.contacts);
+      $scope.isLoggedIn = true;
+      console.log($scope.isLoggedIn);
     })
+  }
+
+  const logOut = () => {
+    localStorage.setItem("token", "");
+    currToken = localStorage.token;
+    $scope.hasToken = Boolean(currToken);
+    $scope.isLoggedIn = false;
+    $scope.contacts = [];
   }
 
   const createAcc = () => {
@@ -80,14 +107,20 @@ app.controller("mainController", ["$scope", "$http", ($scope, $http) => {
     })
   }
 
-  $scope.login = () => {
+  $scope.login = (login) => {
 
-    if($scope.hasToken){
+    if(login){
+      console.log("logging in!");
       postToken();
     } else {
+      console.log("creating account!");
       createAcc();
     }
-
-
   }
+
+  $scope.logout = () => {
+    logOut();
+  }
+
+  checkLoggedIn();
 }]);
