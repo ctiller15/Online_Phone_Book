@@ -1,5 +1,6 @@
 ﻿using Microsoft.Owin;
 using Microsoft.Owin.Security.OAuth;
+using Online_Phone_Book.Providers;
 using Owin;
 using System;
 using System.Collections.Generic;
@@ -14,9 +15,12 @@ namespace Online_Phone_Book
     {
         public void Configuration(IAppBuilder app)
         {
-            ConfigureOAuth(app);
             HttpConfiguration config = new HttpConfiguration();
+
+            ConfigureOAuth(app);
+
             WebApiConfig.Register(config);
+            app.UseCors(Microsoft.Owin.Cors.CorsOptions.AllowAll);
             app.UseWebApi(config);
         }
 
