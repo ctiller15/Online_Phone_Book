@@ -74,6 +74,7 @@ app.controller("mainController", ["$scope", "$http", ($scope, $http) => {
       }
     }).then(res => {
       console.log(res);
+      // set response data on contacts to scope.
       $scope.contacts = res.data;
       console.log($scope.contacts);
       $scope.isLoggedIn = true;
